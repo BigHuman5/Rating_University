@@ -1,13 +1,54 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Rating_University.Data;
 using Rating_University.Data.Models;
+using Rating_University.Features.Admin.Roles;
+using Rating_University.Features.Identity;
+using System.Text;
 
 namespace Rating_University.Infrastructure.Extensions
 {
     public static class ServiceCollectionExtensions
     {
+        public static AppSettings GetApplicationSettings(
+            this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            var applicationSettings = configuration.GetSection("ApplicationSettings");
+            services.Configure<AppSettings>(applicationSettings);
+            return applicationSettings.Get<AppSettings>();
+        }
+
+        public static IServiceCollection AddJwtAuthentication(
+            this IServiceCollection services,
+            AppSettings appSettings)
+        {
+            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
+            return services;
+        }
+
         public static IServiceCollection AddDatabase(this IServiceCollection services
             ,IConfiguration configuration)
         {
@@ -36,11 +77,11 @@ namespace Rating_University.Infrastructure.Extensions
             //    .AddControllers();
         }
 
-        /*public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
-            //return services
-            //    .AddTransient<>();
-           // return null;
-        }*/
+            return services
+                .AddTransient<IIdentityServices,IdentitryServices>()
+                .AddTransient<IRolesServices,RolesServices>();
+        }
     }
 }
