@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Rating_University.Features.Admin.Accounts.Model;
 using Rating_University.Features.Identity.Model;
 
 namespace Rating_University.Features.Identity
@@ -9,35 +11,13 @@ namespace Rating_University.Features.Identity
         private readonly AppSettings appSettings;
 
         public IdentityController(IIdentityServices identityServices,
-            AppSettings appSettings)
+            IOptions<AppSettings> appSettings)
         {
             _identityServices = identityServices;
-            this.appSettings = appSettings;
+            this.appSettings = appSettings.Value;
         }
 
         [HttpPost]
-        [Route(nameof(Create))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult> Create(CreateRequestModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var createNewUser = await _identityServices.Create(model);
-
-                if(createNewUser.Failure)
-                {
-                    return BadRequest(createNewUser.Message);
-                }
-
-                return Ok(createNewUser.Message);
-            }
-
-            return BadRequest();
-        }
-
-        [HttpPost]
-        [Route(nameof(Login))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<LoginResponseModel>> Login(LoginRequestModel model)
@@ -51,7 +31,7 @@ namespace Rating_University.Features.Identity
                     return Unauthorized();
                 }
 
-                return Ok();
+                return Ok(user.Value);
             }
 
             return BadRequest();

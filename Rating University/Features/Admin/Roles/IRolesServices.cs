@@ -9,7 +9,7 @@ namespace Rating_University.Features.Admin.Roles
     public interface IRolesServices
     {
         Task<IEnumerable> All();
-
         Task<Result> Create(CreateRoleRequestModel model);
+        Task<Result> Delete(int id);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Rating_University.Features.Identity.Model
+namespace Rating_University.Features.Admin.Accounts.Model
 {
     public class CreateRequestModel
     {

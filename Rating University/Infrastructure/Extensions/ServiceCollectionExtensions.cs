@@ -5,8 +5,12 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Rating_University.Data;
 using Rating_University.Data.Models;
+using Rating_University.Features.Admin.Accounts;
+using Rating_University.Features.Admin.Categories;
 using Rating_University.Features.Admin.Roles;
 using Rating_University.Features.Identity;
+using Rating_University.Features.Users;
+using Rating_University.Infrastructure.Services;
 using System.Text;
 
 namespace Rating_University.Infrastructure.Extensions
@@ -59,7 +63,14 @@ namespace Rating_University.Infrastructure.Extensions
         public static IServiceCollection AddIdentity(this IServiceCollection services)
         {
             services
-                .AddIdentity<User, Role>()
+                .AddIdentity<User, Role>(option =>
+                {
+                    option.Password.RequiredLength = 3;
+                    option.Password.RequireNonAlphanumeric = false;
+                    option.Password.RequireUppercase = false;
+                    option.Password.RequireDigit = false;
+                    option.Password.RequiredUniqueChars = 0;
+                })
                 .AddEntityFrameworkStores<Rating_UniversityDbContext>();
             return services;
         }
@@ -80,8 +91,12 @@ namespace Rating_University.Infrastructure.Extensions
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             return services
+                .AddScoped<ICurrentUserServices, CurrentUserServices>()
                 .AddTransient<IIdentityServices,IdentitryServices>()
-                .AddTransient<IRolesServices,RolesServices>();
+                .AddTransient<IRolesServices,RolesServices>()
+                .AddTransient<ICategoryServices, CategoryServices>()
+                .AddTransient<IAccountServices, AccountServices>()
+                .AddTransient<IUserservices, UserServices>();
         }
     }
 }

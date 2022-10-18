@@ -7,9 +7,8 @@ namespace Rating_University.Data.Models
     {
         public string? FullName { get; set; }
 
-        [Required]
-        public int RoleId { get; set; }
-        public Role Role { get; set; }
+        public int TolalPoints { get; set; } = 0;
 
+        public IEnumerable<ItemCategory> ItemCategories { get; set; }
     }
 }

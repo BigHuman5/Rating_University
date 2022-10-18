@@ -6,7 +6,5 @@ namespace Rating_University.Features.Identity.Model
     {
         [Required]
         public string Token { get; set; }
-        [Required]
-        public int RoleId { get; set; }
     }
 }
