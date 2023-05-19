@@ -6,8 +6,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .AddDatabase(builder.Configuration)
     .AddIdentity()
-    //.AddApplicationServices()
-    //.AddSwagger()
+    .AddApplicationServices()
+    .AddSwagger()
+    .AddJwtAuthentication(builder.Services.GetApplicationSettings(builder.Configuration))
     .AddApiControllers();
 
 builder.Services.AddControllersWithViews();
@@ -36,6 +37,6 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllers();
 });
 
-//app.UseSwaggerUI();
+app.UseSwaggerUI();
 
 app.Run();

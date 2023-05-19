@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Rating_University.Data;
 
@@ -11,9 +12,10 @@ using Rating_University.Data;
 namespace Rating_University.Migrations
 {
     [DbContext(typeof(Rating_UniversityDbContext))]
-    partial class Rating_UniversityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221018130321_Add_Categories")]
+    partial class Add_Categories
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -163,9 +165,6 @@ namespace Rating_University.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Points")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -352,15 +351,7 @@ namespace Rating_University.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Rating_University.Data.Models.User", "User")
-                        .WithMany("ItemCategories")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("Category");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Rating_University.Data.Models.Category", b =>
@@ -371,11 +362,6 @@ namespace Rating_University.Migrations
             modelBuilder.Entity("Rating_University.Data.Models.Role", b =>
                 {
                     b.Navigation("Categories");
-                });
-
-            modelBuilder.Entity("Rating_University.Data.Models.User", b =>
-                {
-                    b.Navigation("ItemCategories");
                 });
 #pragma warning restore 612, 618
         }
